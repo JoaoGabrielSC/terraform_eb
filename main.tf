@@ -1,5 +1,5 @@
 # EventBridge Rule
-resource "aws_cloudwatch_event_rule" "eb_pipeline_webposto" {
+resource "aws_cloudwatch_event_rule" "eb_pipeline" {
   name                = "pipeline_test"
   schedule_expression = "rate(1 minute)"
 }
@@ -51,22 +51,22 @@ data "aws_sfn_state_machine" "existing_state_machine" {
 }
 
 resource "aws_cloudwatch_event_target" "sfn_target" {
-  rule      = aws_cloudwatch_event_rule.eb_pipeline_webposto.name
+  rule      = aws_cloudwatch_event_rule.eb_pipeline.name
   arn       = data.aws_sfn_state_machine.existing_state_machine.arn
   role_arn  = aws_iam_role.event_bridge_role.arn
   input     = jsonencode(
-  {
-    "items": [
-      {
-        "item": "test_item1"
-      },
-      {
-        "item": "empty"
-      },
-      {
-        "item": "test_item2"
-      }
-    ]
-  }
+    {
+      "items": [
+        {
+          "item": "test_item1"
+        },
+        {
+          "item": "empty"
+        },
+        {
+          "item": "test_item2"
+        }
+      ]
+    }
   )
 }
