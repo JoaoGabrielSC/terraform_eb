@@ -1,6 +1,6 @@
 # EventBridge Rule
 resource "aws_cloudwatch_event_rule" "eb_pipeline_webposto" {
-  name                = "pipeline_webposto"
+  name                = "pipeline_test"
   schedule_expression = "rate(1 minute)"
 }
 
