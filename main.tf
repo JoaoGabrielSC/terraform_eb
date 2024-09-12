@@ -47,7 +47,7 @@ resource "aws_iam_role_policy_attachment" "eventbridge_policy_attachment" {
 
 
 data "aws_sfn_state_machine" "existing_state_machine" {
-  name = "MyStateMachine-9b4fdofss"
+  name = "MyStateMachine"
 }
 
 resource "aws_cloudwatch_event_target" "sfn_target" {
