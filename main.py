@@ -1,17 +1,16 @@
 from dotenv import load_dotenv
-# Load environment variables
+
 load_dotenv()
 
 import os
 import traceback
-
 
 import io
 import uvicorn
 from mangum import Mangum
 from fastapi import Body, FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
-
+from config import APIResponse
 from entities.services.eb_service import enable_event_rule, disable_event_rule
 
 print("=== API IS STARTING ===")
@@ -27,31 +26,37 @@ app.add_middleware(
 
 
 @app.get("/relaunch-eventbus")
-def relaunch_event_bus():
+def relaunch_event_bus()->APIResponse:
     try:
         response = enable_event_rule()
-        return {'status_code':'200','response': response}
+        return APIResponse(
+            status_code='200', 
+            response=response
+        )
     except Exception as e:
         traceback.print_exc()
-        return {"error": str(e)}
+        return APIResponse(
+            status_code='500',
+            error=str(e)
+        )
 
 @app.get("/stop-eventbus}")
-def stop_event_bus():
+def stop_event_bus()->APIResponse:
     try:
         response = disable_event_rule()
         # check 
-        return {'status_code':'200','response': response}
+        return APIResponse(
+            status_code='200',
+            response=response
+        )
     except Exception as e:
         traceback.print_exc()
-        return {"error": str(e)}
-
-@app.get("/test/{input}")
-def test(input: str):
-    response = f'You have entered {input}'
-    return {"input": response}
+        return APIResponse(
+            status_code='500',
+            error=str(e)
+        )
 
 handler = Mangum(app, lifespan="off")
-
 
 if __name__ == "__main__":
     print("=== API IS RUNNING ===")

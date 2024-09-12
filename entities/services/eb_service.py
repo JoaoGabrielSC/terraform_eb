@@ -1,7 +1,7 @@
 import boto3
-from entities.config import Config, EnvVars
+from entities.config import Config, EnvVars, EventRuleResponse
 
-def enable_event_rule():
+def enable_event_rule() -> EventRuleResponse:
     print("=== ENABLING EVENT RULE ===")
     eventbus_name = Config().get(EnvVars.EVENT_BUS_NAME.value)
     client = boto3.client(
@@ -11,9 +11,8 @@ def enable_event_rule():
         aws_secret_access_key = Config().get(EnvVars.AWS_SECRET_ACCESS_KEY.value)
     )
     
-    # Fetch existing rule details to get the pattern or expression
     rule_details = client.describe_rule(Name=eventbus_name)
-    # print(rule_details)
+
     response = client.put_rule(
         Name=eventbus_name,
         EventPattern=rule_details.get('EventPattern', ''),
@@ -21,9 +20,15 @@ def enable_event_rule():
         State='ENABLED'
     )
     
-    return response
+    return EventRuleResponse(
+        RuleArn=response['RuleArn'],
+        Name=response['Name'],
+        State=response['State'],
+        ScheduleExpression=response.get('ScheduleExpression', None),
+        EventPattern=response.get('EventPattern', None)
+    )
 
-def disable_event_rule():
+def disable_event_rule()-> dict:
     print("=== DISABLING EVENT RULE ===")
     eventbus_name = Config().get(EnvVars.EVENT_BUS_NAME.value)
     client = boto3.client(
@@ -33,9 +38,7 @@ def disable_event_rule():
         aws_secret_access_key = Config().get(EnvVars.AWS_SECRET_ACCESS_KEY.value)
     )
     
-    # Fetch existing rule details to get the pattern or expression
     rule_details = client.describe_rule(Name=eventbus_name)
-    # print(rule_details)
     response = client.put_rule(
         Name=eventbus_name,
         EventPattern=rule_details.get('EventPattern', ''),
@@ -43,4 +46,10 @@ def disable_event_rule():
         State='DISABLED'
     )
     
-    return response
+    return EventRuleResponse(
+        RuleArn=response['RuleArn'],
+        Name=response['Name'],
+        State=response['State'],
+        ScheduleExpression=response.get('ScheduleExpression', None),
+        EventPattern=response.get('EventPattern', None)
+    )

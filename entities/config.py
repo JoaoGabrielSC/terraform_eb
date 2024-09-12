@@ -1,6 +1,8 @@
 import os
 from enum import Enum
+from typing import Optional
 from dotenv import load_dotenv
+from dataclasses import dataclass
 
 load_dotenv()
 
@@ -9,7 +11,22 @@ class EnvVars(Enum):
     AWS_SECRET_ACCESS_KEY='AWS_SECRET_ACCESS_KEY'
     AWS_DEFAULT_REGION='AWS_DEFAULT_REGION'
     EVENT_BUS_NAME='EVENT_BUS_NAME'
-    
+
+
+@dataclass
+class EventRuleResponse:
+    RuleArn: str
+    Name: str
+    State: str
+    ScheduleExpression: Optional[str] = None
+    EventPattern: Optional[str] = None
+
+@dataclass
+class APIResponse:
+    status_code: str
+    response: Optional[EventRuleResponse] = None
+    error: Optional[str] = None
+
 class Config:
 
     __instance = None # singleton instance
