@@ -1,4 +1,6 @@
-# Setup project
+# API for enabling and disabling AWS EventBridge rules
+
+## Setup project
 - Clone the repository
 - Create the virtual environment
 ```bash	
